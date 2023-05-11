@@ -73,7 +73,7 @@ const Formulario = () => {
                             {
                                 lista.map((item, index) => (
                                     <RowUsuario 
-                                        prueba = {Prueba}
+                                        prueba = {Prueba()}
                                         nombre={item.nombre} 
                                         apellido={item.apellido} 
                                         id={item.Id}
