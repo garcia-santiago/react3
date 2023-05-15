@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import RowUsuario from './RowUsuario'
 
 const Formulario = () => {
@@ -8,6 +8,10 @@ const Formulario = () => {
     const [Id, setId] = React.useState(0)
     const [lista, setLista] = React.useState([])
 
+    React.useEffect(() => {
+        console.log(lista)
+    }, [lista])
+
     const guardarDatos = (e) => {
         e.preventDefault();
 
@@ -15,29 +19,36 @@ const Formulario = () => {
             alert("Llenar todos los campos!")
         }
         else{
-            const x = Math.floor(Math.random() * (999999 - 100000) + 100000)
-            setId(x)
+            setId(Math.floor(Math.random() * (999999 - 100000) + 100000))
             setLista([...lista,{nombre, apellido, Id}])
-            // e.target.reset()
-            // setNombre("")
-            // setApellido("")
+            e.target.reset()
+            setNombre("")
+            setApellido("")
+            setId(0)
         }
 
     }
 
-    const Prueba = (idEliminar) => {
-        console.log(idEliminar)
+    const EliminarElemento = (event, idEliminar) => {
         const arrayWithoutD = lista.filter(function (item) {
             return item.Id !== idEliminar;
         });
-        console.log(arrayWithoutD)
-        // setLista(arrayWithoutD)
+        setLista(arrayWithoutD)
+    }
+    const GuardarElemento = (event, idGuardar, nuevoNombre, nuevoApellido) => {
+        const indexElemento = lista.findIndex((elemento => elemento.Id == idGuardar));
+
+        lista[indexElemento].nombre = nuevoNombre
+        lista[indexElemento].apellido = nuevoApellido
+        setNombre(' ')
     }
 
     return (
         <>
-            <div className='container'>
-                <h2 className='text-primary text-center'>Formulario de Registro de Usuarios</h2>
+            <div className='container mt-4'>
+                <h2 className='text-primary text-center mb-3'>
+                    <u>Formulario de Registro de Usuarios</u>
+                </h2>
                 <form onSubmit={guardarDatos}>
                     <input 
                         type="text" 
@@ -60,26 +71,44 @@ const Formulario = () => {
             <hr />
             <br />
             <div className='container'>
-                <h3 className='text-center text-primary'>Usuarios</h3>
+                <h3 className='text-center text-primary'>
+                    <u>Usuarios</u> 
+                </h3>
                 <table>
                     <tbody>
-
-                        <tr>
-                            <th>NOMBRE</th>
-                            <th>APELLIDO</th>
-                            <th>ACCIÓN</th>
-                        </tr>
-
                             {
-                                lista.map((item, index) => (
-                                    <RowUsuario 
-                                        prueba = {Prueba()}
-                                        nombre={item.nombre} 
-                                        apellido={item.apellido} 
-                                        id={item.Id}
-                                        key={index}
-                                    />
-                                ))
+                                lista.length > 0 ?
+                                (
+                                    <tr>
+                                        <th>NOMBRE</th>
+                                        <th>APELLIDO</th>
+                                    </tr>
+                                ):
+                                ('')
+                            }
+                            {
+                                lista.length > 0 ? 
+                                    (
+
+                                        lista.map((item, index) => (
+                                            <RowUsuario 
+                                                EliminarElemento = {EliminarElemento}
+                                                GuardarElemento = {GuardarElemento}
+                                                nombre={item.nombre} 
+                                                apellido={item.apellido} 
+                                                Id={item.Id}
+                                                key={index}
+                                            />
+                                        ))
+                                    ):
+                                    (
+                                        <tr>
+                                            <td colSpan="3" className='border-0'>
+                                                <h4 className='text-danger'>No hay registros!</h4>
+                                            </td>
+                                        </tr>
+
+                                    ) 
                             }
                     </tbody>
                 </table>
